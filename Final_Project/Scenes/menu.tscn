@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://b73vxgoowu3q1"]
+
+[ext_resource type="Script" uid="uid://cbcphc6q0ul6c" path="res://menu.gd" id="1_xhh6f"]
+[ext_resource type="FontFile" uid="uid://qflbrwoa8pxx" path="res://Assets/Fonts/PixelOperator8-Bold.ttf" id="2_cayip"]
+
+[node name="Menu" type="Node2D" unique_id=2008417459]
+script = ExtResource("1_xhh6f")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=262772086]
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.19661847, 0.46466637, 0.43117705, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1008363931]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 377.33334
+offset_top = 212.25
+offset_right = 774.6666
+offset_bottom = 435.75
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 40
+
+[node name="Start" type="Button" parent="VBoxContainer" unique_id=724002728]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_cayip")
+theme_override_font_sizes/font_size = 32
+text = "PLAY"
+
+[node name="Quit" type="Button" parent="VBoxContainer" unique_id=1361280500]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_cayip")
+theme_override_font_sizes/font_size = 32
+text = "QUIT"
+
+[connection signal="button_down" from="VBoxContainer/Start" to="." method="_on_start_button_down"]
+[connection signal="button_down" from="VBoxContainer/Quit" to="." method="_on_quit_button_down"]
