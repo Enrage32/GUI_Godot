@@ -7,7 +7,7 @@ Create project -> Enter Project Name -> "Create Folder" is On -> Open Project
 For organizing files create folders Assets, Scenes, Scripts. In Assets create another folder called Sprites.
 FileSystem (in the left bottom corner) -> Right click on res:// -> Create Folder
 
-Download Assests from Github repository and now drag downloaded folders right into Project's Assets in Godot. (!!!! Update when we will actually create Github repository for this, so we now what will be called and what will be inside !!!)
+Download Assests from Github repository and now drag downloaded folders right into Project's Assets in Godot.
 
 Now we are ready to create our first scene.
 
@@ -39,7 +39,7 @@ AnimatedSprite2D
 Choose AnimatedSprite2D in the left tab (Scene). In the right tab (Inspector) you should see "Sprite Frames - empty". Click on "empty" and choose
 SpriteFrames. Now press SpriteFrames, and you will see Animations Panel in the bottom tab. If you're creating a first animation for this player you will see "default" animation, with which you can work already. If you need to Add a New Animation, press "Paper with a Plus" Button. Rename Animations by double-clicking them. Next step is Adding Frames. Choose Animation and Press a Grid Button (Add Frames from Sprite Sheet). Go to Assets/Sprites and choose Sprite Sheet for your Node. Before choosing Frames, we need to set Sprite Sheet correctly. Define how many horizontal and vertical lines are there. Choose the Frames that will be in your Animation, be aware to choose them in the right order. Change Animation Speed by entering another amount of FPS. Looping is enabled by default, you can disable it by Pressing a Loop Button. You can tell an Animation to Play on Load by Pressing "A>" Button. In Animation Frames you can press Play to Check the Animation.
 
-Create "idle" Animation. Change Animation Speed to 10 FPS. Enable Play on Load. For now our AnimatedSprite is blurry, (!!! Understand why it's blurry at first !!!) so let's fix it. In the top panel go to Project -> Project Settings -> Go to Rendering in the left navigation menu -> Textures -> Default Texture Filter -> Change to Nearest
+Create "idle" Animation. Change Animation Speed to 10 FPS. Enable Play on Load. For now our AnimatedSprite is blurry, so let's fix it. In the top panel go to Project -> Project Settings -> Go to Rendering in the left navigation menu -> Textures -> Default Texture Filter -> Change to Nearest
 
 CollisionShape2D
 
@@ -106,15 +106,18 @@ Now we start painting the level. Press TileMap and select Tiles and place them. 
 
 ## Dragging Player to the World
 
-Now find "player.tscn" in File Manager, drag him to the World Scene and place him on some platfrom you created before. Add Camera2D as a Child Node of Player. Place Camera higher than the player. In Inspector Tab you will need to change this: "Zoom" 2.5x, "Position Smoothing" On, in Limit "Smoothed" needs to also be On, "Process Callback" Physics. We need the last change so the World will not seem blurry later. (??? Understand why it happens ????).
+Now find "player.tscn" in File Manager, drag him to the World Scene and place him on some platfrom you created before. Add Camera2D as a Child Node of Player. Place Camera higher than the player. In Inspector Tab you will need to change this: "Zoom" 2.5x, "Position Smoothing" On, in Limit "Smoothed" needs to also be On, "Process Callback" Physics. We need the last change so the World will not seem blurry later.
 
 Add Player an Animation for Running. (Player Scene - AnimatedSprite2D - New Animation - Grid - Select Frames - Rename - Set Frame Speed - Go to Script)
 
-Now in the Script we will write when which Animation will be playing. First of all, drag AnimatedSprite into the Script holding Ctrl. This will create a variable referencing to AnimatedSprite. @onready is needed, so (??? why is it needed I know that it is so it will load only when animatedsprite was already loaded in the scene ???)
+Now in the Script we will write when which Animation will be playing. First of all, drag AnimatedSprite into the Script holding Ctrl. This will create a variable referencing to AnimatedSprite. @onready is needed, so...
+
 ```
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 ```
+
 Now in _physics_process(delta) we write a condition for playing animation.
+
 ```
 if direction != 0:
     animated_sprite.play("run")
@@ -152,7 +155,7 @@ In the Inspector tab you will see "Texture - empty". Drag there the correspondin
 Parallax2D:
 Now we want to create a feeling like the Background has depth in it. For this go to the Inspector tab for Parallax2D and change Scroll Scale (both x and y). Let the Back Parallax2D have 0.2 Scroll Scale, Mid will have 0.5 and Front 1.0. The furthest layer will have the lowest value. For our Background to repeat itself, go to Repeat -> RepeatSize -> Set the Value of the Screen Width (1152.0 by default).
 
-Don't forget to save our Background as a Scene and drag it to the World. The Background should be in the lowest right quarter with it's top left corner being in (0,0) coordinates. So this is why we were creating our World and placing Player in the bottom right quarter. The area of blue rectangle will be (??? what is it our first frame First frame should be within a blue rectangle that displays camera ???)
+Don't forget to save our Background as a Scene and drag it to the World. The Background should be in the lowest right quarter with it's top left corner being in (0,0) coordinates. So this is why we were creating our World and placing Player in the bottom right quarter.
 
 
 Let's also limit our Camera view, so it won't see how background ends. Click on Camera in Scene and in the Inspector tab -> Limit -> set Bottom to 650 px.
@@ -163,7 +166,7 @@ Why do we need killzone? Falling from map, spikes, lava would have the same kill
 Create a new Scene -> Add a Node Area 2D -> Rename to Killzone
 
 •
-Next step is Signal. Signal is (??? explain more detailed what is signal ???)
+Next step is Signal.
 
 ### How to connect a Signal?
 
@@ -199,7 +202,13 @@ Arrow of WorldBoundary needs to look up. And we will put Killzone on the line wh
 
 For now let's create a method for respawning.
 
-Our Player will have three lives. If he loses a life, he will be just respawned in the beginning of the level. If he loses all three lifes, the whole level will be reloaded with this function: • `get_tree().reload_current_scene()`
+Our Player will have three lives. If he loses a life, he will be just respawned in the beginning of the level. If he loses all three lifes, the whole level will be reloaded with this function:
+
+```
+get_tree().reload_current_scene()
+
+```
+
 For a normal respawning we need to save our default spawn position. In func _ready() we say that spawn_position is our current position. Function _ready() is being called once in the beginning when both the node and its children have entered the scene tree. This is why spawn_position saves the start position of the Character.
 
 New functions:
@@ -396,7 +405,7 @@ if attacking:
     return
 ```
 
-Now we need to add Hitbox and Hurtbox. • Explain what is Hitbox and Hurtbox(!!!!!). we're going to add Hitbox to the Player and Hurtbox to the Mob.
+Now we need to add Hitbox and Hurtbox. We're going to add Hitbox to the Player and Hurtbox to the Mob.
 
 ### Hitbox for Player
 Go to Player's Scene -> Add Area2D as a Child Node of Player -> Add CollisionShape2D as a Child Node of Area2D. This Area2D will be our HitBox, rename it. Choose RectangleShape for HitBox. To place it correctly start playing the Animation of Attacking. This will help you to reposition. But now there is a problem that our Hitbox is always facing right, we need to flip it as we do with AnimationSprite. Let's create for this purposes a Pivot for flipping AnimatedSprite and Hitbox. Add a Node2D as a Child Node of Player -> Rename to Pivot -> Reposition AnimatedSprite and Hibox so they would be Children Nodes of Pivot. Now we need to flip only Pivot and AnimatedSprite and Hitbox will flip automatically with it.
@@ -424,7 +433,7 @@ if direction != 0:
     pivot.scale.x = direction
 ```
 
-Also important thing! The Player's Hitbox won't be enabled always, we will enable CollisionShape of Hitbox only if Player is currently attacking. When we enable Hitbox and something appears to be in our Hitbox, it counts like it has entered the area of Hitbox. So by default it will be turned off. To do this, we can go to the Inspector tab of the CollisionShape inside HitBox and Press Disabled - On. (?? Or write in _ready() I would rather change this in Inspector???)
+Also important thing! The Player's Hitbox won't be enabled always, we will enable CollisionShape of Hitbox only if Player is currently attacking. When we enable Hitbox and something appears to be in our Hitbox, it counts like it has entered the area of Hitbox. So by default it will be turned off. To do this, we can go to the Inspector tab of the CollisionShape inside HitBox and Press Disabled - On.
 In the Script later we will define when we will enable/disable the CollisionShape. Now let's go to the Signals of Hitbox in the right tab, Click on the Signal _area_entered(area) and Connect it to the Player's Script. Now in the Script we write this:
 
 New:
@@ -600,7 +609,7 @@ func _on_start_button_down() -> void:
 ```
 
 ## Pause
-Now pause! We will create a new scene and then make it part of UI. (? is it right ?)
+Now pause! We will create a new scene and then make it part of UI.
 For now it's the same. New scene - Node2D - ColorRect, VBoxContainer - Three Buttons. We can also add Label, to tell that the game is paused.
 Now Script for Pause. Create an Action for Pausing. Connect Signals for Buttons to the Script.
 Project - Project Settings - Input Map - New Action - Pause on Escape. Now we need _process function in Pause's Script that will check if Input.is_action_just_pressed("pause")
