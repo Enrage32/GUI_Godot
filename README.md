@@ -8,9 +8,9 @@ This repository contains a complete, ready-to-use GUI (Graphical User Interface)
 * **Custom Assets:** Assets included in a separate directory.
 
 ## Project Structure
-* `GodotProject/` - The main Godot Engine project folder.
-* `Assets/` - Raw assets used in the project development.
-* `Manual.md` - Project documentation and instructions.
+* [`GodotProject/`](./GodotProject/) - The main Godot Engine project folder.
+* [`Assets/`](./Assets/) - Raw assets used in the project development.
+* [`Manual.md`](./Manual.md) - Project documentation and instructions.
 
 ## Getting Started
 
