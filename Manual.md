@@ -653,4 +653,8 @@ func _on_main_menu_button_down() -> void:
 
 ```
 
+<<<<<<< HEAD
 * All the manual was created w/o AI
+=======
+**This manual was created w/o AI**.
+>>>>>>> 5fa563f023f078a05863c4ef45231d4ddc5a36c1
