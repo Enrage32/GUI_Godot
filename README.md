@@ -21,3 +21,6 @@ To explore or edit this project on your local machine, follow these steps:
 1. **Clone the repository:**
    ```bash
    git clone [https://github.com/Enrage32/GUI_Godot.git](https://github.com/Enrage32/GUI_Godot.git)
+
+2. **Importing the project to you Godot:**
+   To import the project, you should open your Godot. After that click on the "Import" button in top left corner. You will se File manager, where you should find      downloaded project, and choose archive with project.
