@@ -653,4 +653,4 @@ func _on_main_menu_button_down() -> void:
 
 ```
 
-** This manual was created w/o AI. **
+**This manual was created w/o AI**.
