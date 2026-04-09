@@ -22,6 +22,8 @@ signal collect_emerald(emeralds)
 
 func _ready() -> void:
 	spawn_position = position
+	health_down.emit(health)
+	collect_emerald.emit(emeralds)
 
 func get_hit():
 	getting_hit = true
@@ -42,17 +44,17 @@ func pick_emerald():
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-		
+
 	if getting_hit:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		animated_sprite.play("get_hit")
 		move_and_slide()
 		return
-	
-		
+
+
 	if Input.is_action_just_pressed("attack") and attack_timer.is_stopped():
 		attacking = true
-		
+
 	if attacking:
 		if is_on_floor():
 			velocity.x = move_toward(velocity.x, 0, SPEED)
@@ -60,32 +62,32 @@ func _physics_process(delta: float) -> void:
 		collision_hitbox.disabled = false
 		move_and_slide()
 		return
-	
+
 	if Input.is_action_just_pressed("jump") and (is_on_floor() or !coyote_jump.is_stopped()):
 		velocity.y = JUMP_VELOCITY
-	
+
 	var direction := Input.get_axis("move_left", "move_right")
-	
+
 	if direction != 0:
 		pivot.scale.x = direction
-	
+
 	if not is_on_floor():
 		animated_sprite.play("jump")
 	elif direction != 0:
 		animated_sprite.play("run")
 	else:
 		animated_sprite.play("idle")
-	
-	
+
+
 	if direction:
 		velocity.x = SPEED * direction
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
-	
+
 	var on_floor = is_on_floor()
-	
+
 	move_and_slide()
-	
+
 	if on_floor and !is_on_floor():
 		coyote_jump.start()
 

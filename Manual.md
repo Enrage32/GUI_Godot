@@ -583,6 +583,12 @@ Inside UI's Script:
     health_label.text = "Lives: " + str(health)
 ```
 
+also we can add emits for _on_ready inside of our player
+
+```
+	health_down.emit(health)
+	collect_emerald.emit(emeralds)
+```
 
 ## Menu
 
