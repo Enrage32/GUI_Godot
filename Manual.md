@@ -25,12 +25,6 @@ Now you need to press a Plus in the left tab called Scene OR press Ctrl + A to A
 
 Create CharacterBody2D as a Root Node -> Create AnimatedSprite2D and CollisionShape2D as Children Nodes of CharacterBody2D
 
-Your Scene in the left tab shoud look like this:
-
-CharacterBody2D
-    |-> AnimatedSprite2D
-    |-> CollisionShape2D
-
 Now we will modify our created Nodes:
 
 AnimatedSprite2D
@@ -110,7 +104,7 @@ Now find "player.tscn" in File Manager, drag him to the World Scene and place hi
 
 Add Player an Animation for Running. (Player Scene - AnimatedSprite2D - New Animation - Grid - Select Frames - Rename - Set Frame Speed - Go to Script)
 
-Now in the Script we will write when which Animation will be playing. First of all, drag AnimatedSprite into the Script holding Ctrl. This will create a variable referencing to AnimatedSprite. @onready is needed, so...
+Now in the Script we will write when which Animation will be playing. First of all, drag AnimatedSprite into the Script holding Ctrl. This will create a variable referencing to AnimatedSprite. @onready is needed so the script would reference this variable only if it exists already.
 
 ```
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -119,7 +113,7 @@ Now in the Script we will write when which Animation will be playing. First of a
 Now in _physics_process(delta) we write a condition for playing animation.
 
 ```
-if direction != 0:
+if direction:
     animated_sprite.play("run")
 else:
     animated_sprite.play("idle")
@@ -136,16 +130,9 @@ elif direction < 0:
 
 In this project the Background consists of several images. We want them to be layered for a beautiful animation of transition and we want the Background to repeat itself infinitely. This is why we need Parallax.
 
-Add a New Scene -> Choose 2D Scene -> Add three Parallax2D as Children Nodes -> Name them: Back, Mid, Front -> Add Sprite2D for each Parallax2D as it's Child Node
+Add a New Scene -> Choose 2D Scene -> Add Parallax2D as Child Nodes -> Add Sprite2D for Parallax2D as it's Child Node
 
-Your Scene should look like this:
-Node2D
-    |-> Parallax2D (Back)
-      |-> Sprite2D
-    |-> Parallax2D (Mid)
-      |-> Sprite2D
-    |-> Parallax2D (Front)
-      |-> Sprite2D
+We will configure our Sprite2D and Parallax2D and after we are ready we will duplicate Parallax2D two times, so there would be three Parallax2D.
 
 Sprite2D:
 
@@ -154,6 +141,8 @@ In the Inspector tab you will see "Texture - empty". Drag there the correspondin
 
 Parallax2D:
 Now we want to create a feeling like the Background has depth in it. For this go to the Inspector tab for Parallax2D and change Scroll Scale (both x and y). Let the Back Parallax2D have 0.2 Scroll Scale, Mid will have 0.5 and Front 1.0. The furthest layer will have the lowest value. For our Background to repeat itself, go to Repeat -> RepeatSize -> Set the Value of the Screen Width (1152.0 by default).
+
+Duplicate Parallax2D, for each layer rename them to (Back, Mid, Front), drag corresponding images to Sprite2D and change Scroll Scale to (0.3, 0.5, 1.0).
 
 Don't forget to save our Background as a Scene and drag it to the World. The Background should be in the lowest right quarter with it's top left corner being in (0,0) coordinates. So this is why we were creating our World and placing Player in the bottom right quarter.
 
@@ -165,7 +154,7 @@ Let's also limit our Camera view, so it won't see how background ends. Click on 
 Why do we need killzone? Falling from map, spikes, lava would have the same killzone, because they are killing player and they can share this killzone.
 Create a new Scene -> Add a Node Area 2D -> Rename to Killzone
 
-•
+
 Next step is Signal.
 
 ### How to connect a Signal?
@@ -191,7 +180,7 @@ var health = 3
 
   func get_hit():
     health -= 1
-	print(health)
+	  print(health)
 
 ```
 
@@ -227,12 +216,12 @@ Edit functions:
 ```
   func get_hit():
     health -= 1
-	respawn()
+	  respawn()
 ```
 
 Now we respawn too quickly and without animation (I know that we won't see the animation if we're falling off map, but we will need this for interaction with Mob later). Let's add animation for getting hit and after finishing playing the animation Character will respawn.
 
-Go to Player Scene and create a new animation for Dying, for this animation disable looping. Now go to Player's Script and create variable getting_hit. This variable will represent if a Character just took damage. This will help us to play Animation correctly. Without this it variable if we just played Animation in our get_hit() function, it would only play one frame of Animation. Also we will need to edit some functions, for example, _physics_process, so it would play the Animation. When the Animation finishes playing, Player will respawn. In addition to this we will stop player from moving around when he takes damage, but still let him fall down with move_and_slide().
+Go to Player Scene and create a new animation for Dying, for this animation disable looping. Now go to Player's Script and create variable getting_hit. This variable will represent if a Character just took damage. This will help us to play Animation correctly. Without this variable if we just played Animation in our get_hit() function, it would only play one frame of Animation. Also we will need to edit some functions, for example, _physics_process, so it would play the Animation. When the Animation finishes playing, Player will respawn. In addition to this we will stop player from moving around when he takes damage, but still let him fall down with move_and_slide().
 
 New:
 ```
@@ -300,15 +289,18 @@ For _on_animated_sprite_2d_animation_finished() to work, we need to connect a Si
 
 Add Animation for jumping. (Player Scene -> AnimatedSprite -> Add Animation -> Jump -> Choose frames -> Disable loop)
 Go to Player's Script. If Player not is_on_floor() then play Animation jump. We can write it above idle and running Animations.
+
+Edit in _physics_process(delta)
 ```
 if not is_on_floor():
     animated_sprite.play("jump")
-
+elif direction:
+  ...
 ```
 
-Now we can see that our player could fall off the edge of the platform. To solve this we will add Coyote jump.
+Now we can see that our player could fall off the edge of the platform. To solve this we will add Coyote time.
 
-For a Coyote jump we need to create a Timer for our player. So in Player Scene, player + ctrl_a + Timer, to create a Timer as a Child Node of PLayer.
+For a Coyote time we need to create a Timer for our player. So in Player Scene, player + ctrl_a + Timer, to create a Timer as a Child Node of PLayer.
 Let's rename it to CoyoteJump.
 Now in the Inspector tab let's make it Wait Time for a 0.12 second and enable one_shot, so it will processed once. After that we will move to a Player's Script, where we should define our Timer by dragging it in our code with pressed Ctrl. In our _physics_process we will create a new variable on_floor that should be before move_and_slide function. And after move_and_slide we will add a new if statement (if on_floor and !is_on_floor(): -> coyote_jump.start()). It will look like this:
 
@@ -325,7 +317,7 @@ Edit in _physics_process(delta)
 ```
 
 The reason why we did this is that is_on_floor() function updates after move_and_slide, so we are comparing two close states that go one after another of our Player and turn on the Timer.
-After that we should change a little our jumping logic. We will check not only is_on_floor(), but also if the timer of Coyote jump has ended. ((is_on_floor() or !coyote_jump.is_stopped()))
+After that we should change a little our jumping logic. We will check not only is_on_floor(), but also if the timer of Coyote time has not ended yet. ((is_on_floor() or !coyote_jump.is_stopped()))
 
 Edit in _physics_process(delta)
 ```
@@ -339,12 +331,12 @@ Edit in _physics_process(delta)
 ## Mob
 
 Now let's create a mob.
-Create a New Scene -> CharacterBody2D -> Add Nodes AnimatedSprite2D, CollisionShape2D, two RayCast2D, Killzone (the one we have created earlier) as Children of CharactedBody2D. We will need RayCast so Mob could move around and bounce off the barriers. For this specific reason we will add to the Game Scene invisible blocks which will have Collision Layer = 3. Then RayCast will have Collision Mask Layer also 3. Invisible block will be a StaticBody with CollisionShape. RayCast will look right and left. Now create a Script for mob. When RayCast is colliding mob will change direction of it's movement. Also in AnimatedSprite create Animation for running and enable AutoPlay for it.
+Create a New Scene -> CharacterBody2D -> Add Nodes AnimatedSprite2D, CollisionShape2D, two RayCast2D, Killzone (the one we have created earlier) as Children of CharactedBody2D. We will need RayCast so Mob could move around and bounce off the barriers. For this specific reason we will add to the Game Scene invisible blocks which will have Collision Layer = 3. Then RayCast will have Collision Mask Layer also 3. Invisible block will be a StaticBody with CollisionShape. RayCast's arrows will look right and left and need to be short, the exact time when the point of the arrow will be colliding, our Mob will change it's direction. Now create a Script for mob. As already was said, when RayCast is colliding mob will change direction of it's movement. Also in AnimatedSprite create Animation for running and enable AutoPlay for it because our Mob will always be moving from the start.
 
 ```
 
 const SPEED = 50
-class_name Slime
+class_name Slime            #we need this so a player could identify mob later for attacks
 
 @onready var left_cast: RayCast2D = $Left_cast
 @onready var right_cast: RayCast2D = $Right_cast
@@ -353,8 +345,6 @@ class_name Slime
 var direction = 1
 
 func _physics_process(delta: float) -> void:
-
-	animated_sprite.play("run") (??? Do we really need this????)
 
 	if right_cast.is_colliding():
 		direction = -1
@@ -542,14 +532,14 @@ func pick_emerald():
 
 ## UI
 
-Now let's add UI for showing the amount of Lives and Emeralds. New scene -> CanvasLayer -> Two Labels as Children Nodes of CanvasLayer. Put them in the corners and type in the Text Field: Lives: 3, Emeralds: 0 correspondingly. To change Font: Label - Inspector Tab - Theme Overrides - Font - Drag there Font from the File Manager. In Theme Overrides you can play with fonts, outliners, colors etc. Now let's create script for UI. Also we will need to create two custom Signals in Player's Script, that will ask UI to update it's labels. Signal collect_emerald(emeralds), signal health_down(health). To call them we will write health_down.emit(health). In the right tab Signals of the Player connect these Signals to UI. In the UI's Script drag Labels with a pressed Ctrl for creating variables. With these Custom Signals we can pass variables.
+Now let's add UI for showing the amount of Lives and Emeralds. New scene -> CanvasLayer -> Two Labels as Children Nodes of CanvasLayer. Put them in the corners and type in the Text Field: Lives: X, Emeralds: X correspondingly. To change Font: Label - Inspector Tab - Theme Overrides - Font - Drag there Font from the File Manager. In Theme Overrides you can play with fonts, outliners, colors etc. Now let's create script for UI. Also we will need to create two custom Signals in Player's Script, that will ask UI to update it's labels. Signal update_emeralds(emeralds), signal update_health(health). To call them we will write update_health.emit(health). In the right tab Signals of the Player connect these Signals to UI. You need to add UI to the Game Scene already and choose Player in Game scene to connect a Signal to UI. In the UI's Script drag Labels with a pressed Ctrl for creating variables. With these Custom Signals we can pass variables. Also we will emit the signal inside our _ready function, so we will pass UI our starting variables. But for this to work UI needs to be higher in the Scene tree than the player, it's because of how _ready() function works.
 
 Inside Player's Script:
 
 New:
 ```
-  signal health_down(health)
-  signal collect_emerald(emeralds)
+  signal update_health(health)
+  signal update_emeralds(emeralds)
 ```
 
 Edit:
@@ -557,15 +547,19 @@ Edit:
 ```
   func pick_emerald():
     emeralds += 1
-    collect_emerald.emit(emeralds)
+    update_emeralds.emit(emeralds)
 
   func respawn():
     if health > 0:
       position = spawn_position
       getting_hit = false
-      health_down.emit(health)
+      update_health.emit(health)
     else:
       get_tree().reload_current_scene()
+
+  func _ready():
+    update_health.emit(health)
+    update_emeralds.emit(emeralds)
 ```
 
 
@@ -575,20 +569,14 @@ Inside UI's Script:
   @onready var health_label: Label = $Health
   @onready var emeralds_label: Label = $Emeralds
 
-  func _on_player_collect_emerald(emeralds: Variant) -> void:
+  func _on_player_update_emeralds(emeralds: Variant) -> void:
     emeralds_label.text = "Emeralds: " + str(emeralds)
 
 
-  func _on_player_health_down(health: Variant) -> void:
+  func _on_player_update_health(health: Variant) -> void:
     health_label.text = "Lives: " + str(health)
 ```
 
-also we can add emits for _on_ready inside of our player
-
-```
-	health_down.emit(health)
-	collect_emerald.emit(emeralds)
-```
 
 ## Menu
 
@@ -664,3 +652,5 @@ func _on_main_menu_button_down() -> void:
 	get_tree().change_scene_to_file("res://Scenes/menu.tscn")
 
 ```
+
+* All the manual was created w/o AI

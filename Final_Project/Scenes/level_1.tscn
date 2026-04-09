@@ -312,6 +312,8 @@ sources/0 = SubResource("TileSetAtlasSource_8ffim")
 
 [node name="level_1" type="Node2D" unique_id=1456884101]
 
+[node name="UI" parent="." unique_id=1757272195 instance=ExtResource("10_chwpn")]
+
 [node name="Background" parent="." unique_id=1566549643 instance=ExtResource("1_xrdnt")]
 
 [node name="player" parent="." unique_id=1961915559 instance=ExtResource("2_8ffim")]
@@ -356,8 +358,6 @@ position = Vector2(1248, 520)
 
 [node name="Emerald3" parent="Emeralds" unique_id=454247888 instance=ExtResource("10_af3po")]
 position = Vector2(1216, 520)
-
-[node name="UI" parent="." unique_id=1757272195 instance=ExtResource("10_chwpn")]
 
 [connection signal="collect_emerald" from="player" to="UI" method="_on_player_collect_emerald"]
 [connection signal="health_down" from="player" to="UI" method="_on_player_health_down"]
